@@ -13,25 +13,16 @@ public with sharing class WarehouseCalloutService implements Queueable {
     }
 
     public void execute(QueueableContext context) {
-        try {
-            processData();
-        } catch (Exception e) {
-            System.debug('Caught Exception: ' + e.getMessage());
-        }
+       processData();
     }
 
     @Future(callout = true)
     public static void processData() {
-        try {
-            HttpResponse response = fetchData(WAREHOUSE_URL);
-
-            if (response.getStatusCode() == 200) {
-                List<EquipmentResponse> equipmentList = parseData(response.getBody());
-                upsertEquipmentRecords(equipmentList);
-            }
-        } catch (Exception e) {
-            System.debug('Error encountered: ' + e.getMessage());
-        }
+    	HttpResponse response = fetchData(WAREHOUSE_URL);
+        if (response.getStatusCode() == 200) {
+        	List<EquipmentResponse> equipmentList = parseData(response.getBody());
+            upsertEquipmentRecords(equipmentList);
+         }
     }
 
     private static HttpResponse fetchData(String endpoint) {
@@ -44,7 +35,7 @@ public with sharing class WarehouseCalloutService implements Queueable {
     }
 
     private static List<EquipmentResponse> parseData(String responseBody) {
-        return (List<EquipmentResponse>) JSON.deserialize(responseBody, List<EquipmentResponse>.class);
+   		return (List<EquipmentResponse>) JSON.deserialize(responseBody, List<EquipmentResponse>.class);
     }
 
     private static void upsertEquipmentRecords(List<EquipmentResponse> equipmentList) {
